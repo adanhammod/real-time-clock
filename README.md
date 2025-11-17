@@ -1,9 +1,10 @@
 # Real-Time Clock
 
-## Overview
-
 [🔵 **Live Demo — Visit Site**: Real Time Clock](https://adanhammod.pythonanywhere.com/)
 
+<img width="1901" height="871" alt="image" src="https://github.com/user-attachments/assets/b5548d28-ffb1-4029-97a0-83f466fbe7b0" />
+
+## Overview
 This project is a real-time digital clock with a mini calendar. Users can:
 
 - View current time and date.
@@ -43,5 +44,4 @@ This project is a real-time digital clock with a mini calendar. Users can:
 - Uses semi-transparent backgrounds and blur to enhance readability on background image.
 - The project is designed to be easily extendable (e.g., adding events to the calendar).
 
-<img width="1901" height="871" alt="image" src="https://github.com/user-attachments/assets/b5548d28-ffb1-4029-97a0-83f466fbe7b0" />
 
