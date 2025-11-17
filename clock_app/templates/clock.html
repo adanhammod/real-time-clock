@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Real Time Clock</title>
+<style>
+/* ---------------------------
+   BODY & BACKGROUND
+--------------------------- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Background image */
+    background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    transition: background 0.5s, color 0.5s, filter 0.5s;
+}
+
+/* Dark mode styles for body */
+body.dark-mode {
+    background-color: #121212;
+    color: #f1f1f1;
+    filter: brightness(0.9);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+/* ---------------------------
+   MAIN CONTAINER
+--------------------------- */
+.main-container {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    align-items: stretch;    /* Make items same height */
+    padding: 60px;
+    gap: 50px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* ---------------------------
+   CLOCK SECTION
+--------------------------- */
+.clock-container {
+    width: 300px;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between elements */
+    text-align: center;
+    background: rgba(0, 0, 0, 0.45); /* Semi-transparent background */
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px); /* Blur effect behind container */
+    transition: background 0.5s, color 0.5s, box-shadow 0.5s;
+}
+
+/* Dark mode for clock container */
+body.dark-mode .clock-container {
+    background: rgba(30,30,30,0.85);
+    box-shadow: 0 8px 25px rgba(255,255,255,0.1);
+}
+
+/* Clock text */
+#time {
+    font-size: 70px;
+    margin: 10px 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+#date {
+    font-size: 28px;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+}
+
+/* Select and button styles */
+select, button {
+    font-size: 16px;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Select box colors */
+select {
+    background: rgba(255,255,255,0.8);
+    color: #333;
+}
+body.dark-mode select {
+    background: rgba(50,50,50,0.8);
+    color: #fff;
+}
+
+/* ---------------------------
+   BUTTONS
+--------------------------- */
+button {
+    cursor: pointer;
+    background-color: #ff69b4; /* Pink button */
+    color: #fff;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+button:hover {
+    background-color: #ff4c9e; /* Darker pink on hover */
+    transform: translateY(-2px);
+}
+
+/* Keep pink color in dark mode */
+body.dark-mode button {
+    background-color: #ff69b4;
+}
+
+/* ---------------------------
+   CALENDAR SECTION
+--------------------------- */
+.calendar {
+    width: 300px;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    background: rgba(0,0,0,0.45);
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    transition: background 0.5s, color 0.5s, box-shadow 0.5s;
+}
+
+/* Dark mode for calendar */
+body.dark-mode .calendar {
+    background: rgba(30,30,30,0.85);
+    color: #f1f1f1;
+    box-shadow: 0 8px 25px rgba(255,255,255,0.1);
+}
+
+.calendar h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    text-align: center;
+}
+
+/* Calendar grid layout */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for days */
+    gap: 8px;
+}
+
+/* Individual day style */
+.day {
+    padding: 10px 0;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s, background 0.3s;
+}
+
+/* Hover effect for day */
+.day:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.2);
+}
+body.dark-mode .day:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Highlight today */
+.today {
+    background: #ff69b4;
+    font-weight: bold;
+    color: white !important;
+}
+</style>
+</head>
+<body>
+<div class="main-container">
+    <!-- CLOCK SECTION -->
+    <div class="clock-container">
+        <div id="date">--</div> <!-- Display current date -->
+        <div id="time">--:--:--</div> <!-- Display current time -->
+
+        <!-- Timezone selector -->
+        <div>
+            <label for="timezone">Timezone:</label>
+            <select id="timezone">
+                <option value="Asia/Jerusalem" selected>Israel</option>
+                <option value="UTC">UTC</option>
+                <option value="America/New_York">New York</option>
+                <option value="Asia/Tokyo">Tokyo</option>
+            </select>
+        </div>
+
+        <!-- Dark mode toggle button -->
+        <button id="mode-toggle">Dark Mode</button>
+    </div>
+
+    <!-- CALENDAR SECTION -->
+    <div class="calendar">
+        <h2 id="monthYear"></h2> <!-- Display month and year -->
+        <div class="calendar-grid" id="calendarGrid"></div> <!-- Calendar days grid -->
+    </div>
+</div>
+
+<script>
+// ---------------------------
+// GET ELEMENT REFERENCES
+// ---------------------------
+const timeElem = document.getElementById("time");
+const dateElem = document.getElementById("date");
+const tzSelect = document.getElementById("timezone");
+const body = document.body;
+const modeBtn = document.getElementById("mode-toggle");
+
+// ---------------------------
+// UPDATE TIME FUNCTION
+// ---------------------------
+async function updateTime() {
+    try {
+        // Get selected timezone
+        const tz = tzSelect.value;
+        // Fetch current time from server API
+        const response = await fetch(`/api/time?tz=${tz}`);
+        const data = await response.json();
+        // Update HTML elements
+        timeElem.innerText = data.time;
+        dateElem.innerText = data.date;
+    } catch (error) {
+        console.error("Error fetching time:", error);
+    }
+}
+
+// Update every second
+setInterval(updateTime, 1000);
+
+// Update when timezone changes
+tzSelect.addEventListener("change", updateTime);
+updateTime(); // Initial call
+
+// ---------------------------
+// DARK MODE TOGGLE
+// ---------------------------
+modeBtn.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+    modeBtn.innerText = body.classList.contains("dark-mode") ? "Light Mode" : "Dark Mode";
+});
+
+// ---------------------------
+// BUILD MINI CALENDAR
+// ---------------------------
+function buildCalendar() {
+    const today = new Date();
+    const month = today.getMonth();
+    const year = today.getFullYear();
+
+    const monthNames = ["January","February","March","April","May","June",
+                        "July","August","September","October","November","December"];
+    // Display month and year
+    document.getElementById("monthYear").innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay(); // Index of first day
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in month
+
+    let grid = "";
+    // Add empty cells before first day
+    for (let i = 0; i < firstDay; i++) grid += `<div></div>`;
+    // Add days
+    for (let d = 1; d <= daysInMonth; d++) {
+        const isToday = d === today.getDate(); // Highlight today
+        grid += `<div class="day ${isToday ? "today" : ""}">${d}</div>`;
+    }
+    // Set calendar grid HTML
+    document.getElementById("calendarGrid").innerHTML = grid;
+}
+
+// Build calendar initially
+buildCalendar();
+</script>
+</body>
+</html>
